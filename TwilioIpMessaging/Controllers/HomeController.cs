@@ -48,26 +48,24 @@ namespace TwilioIpMessaging.Controllers
         {
             System.Diagnostics.Debug.WriteLine(Body);
 
-            return Content("foo");
+            Body = await Translate(Body, "en", "es");
 
-            //Body = await Translate(Body, "en", "es");
+            System.Diagnostics.Debug.WriteLine(Body);
 
-            //System.Diagnostics.Debug.WriteLine(Body);
+            var client = new IpMessagingClient(
+                ConfigurationManager.AppSettings["TwilioApiKey"],
+                ConfigurationManager.AppSettings["TwilioApiSecret"]);
 
-            //var client = new IpMessagingClient(
-            //    ConfigurationManager.AppSettings["TwilioApiKey"],
-            //    ConfigurationManager.AppSettings["TwilioApiSecret"]);
+            var result = client.CreateMessage(
+                ConfigurationManager.AppSettings["TwilioIpmServiceSid"],
+                To, From, Body);
 
-            //var result = client.CreateMessage(
-            //    ConfigurationManager.AppSettings["TwilioIpmServiceSid"],
-            //    To, From, Body);
+            if (result.RestException != null)
+            {
+                System.Diagnostics.Debug.WriteLine(result.RestException.Message);
+            }
 
-            //if (result.RestException != null)
-            //{
-            //    System.Diagnostics.Debug.WriteLine(result.RestException.Message);
-            //}
-
-            //return new HttpStatusCodeResult(403);
+            return new HttpStatusCodeResult(403);
         }
 
         public ActionResult ConfigureService()
